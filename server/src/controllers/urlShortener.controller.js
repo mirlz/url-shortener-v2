@@ -5,7 +5,12 @@ const util = require('../utils/utilities');
 
 async function findShortUrlOrUpsert(url, res) {
     try {
-        const doc = await UrlShortener.findOne({ fullUrl: url });
+        const doc = await UrlShortener.findOne({ 
+            fullUrl: url,
+            expiredAt: {
+                $gte: new Date(),
+            } 
+        });
         if(!doc) {
             const generatedShortUrl = await createNewShortURL(url);
             return `${process.env.webHost}/${generatedShortUrl}`;

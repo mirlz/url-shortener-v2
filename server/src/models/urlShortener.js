@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const util = require('../utils/utilities');
 
 const ShortenURLSchema = new mongoose.Schema({
     countId: {
@@ -12,6 +13,10 @@ const ShortenURLSchema = new mongoose.Schema({
     shortUrl: {
         type: String,
         required: [true, 'shortUrl is required.'],
+    },
+    expiredAt: {
+        type: Date,
+        default: util.setExpiry()
     }
 });
 

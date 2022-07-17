@@ -1,3 +1,4 @@
+require('dotenv').config();
 const dns = require('dns');
 
 function isValidURL(url) {
@@ -16,7 +17,7 @@ function isValidURL(url) {
     });
 }
 
-function idToShortURL(n) 
+function idToShortURL(shortId) 
 {
     // Map to store 62 possible characters
     let map = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -24,14 +25,14 @@ function idToShortURL(n)
     let shorturl = [];
   
     // Convert given integer id to a base 62 number
-    while (n) 
+    while (shortId) 
     {
         // use above map to store actual character
         // in short url
-        shorturl.push(map[Math.round(n % 62)]);
-        n = Math.floor(n / 62);
+        shorturl.push(map[Math.round(shortId % 62)]);
+        shortId = Math.floor(shortId / 62);
         if(shorturl.length <= 7) { 
-            n = Date.now() + Math.random();
+            shortId = Date.now() + Math.random();
         }
     }
   
@@ -40,5 +41,9 @@ function idToShortURL(n)
   
     return shorturl.join("").slice(0, 7);
 }
+
+function setExpiry() {
+    return new Date(new Date().getTime() + (process.env.expiryTokenInHours * 60 * 60 * 1000));
+}
   
-module.exports = {isValidURL, idToShortURL};
+module.exports = {isValidURL, idToShortURL, setExpiry};
