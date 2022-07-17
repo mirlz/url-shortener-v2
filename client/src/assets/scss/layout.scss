@@ -1,0 +1,22 @@
+#root {
+    height: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.App {
+    display: flex;
+    flex: 1;
+}
+.fill-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+header, footer {
+    height: 50px;
+}
+main {
+    flex: 1 !important;
+    text-align: center;
+}
