@@ -1,6 +1,8 @@
 import { observable, action } from "mobx";
 import axios from 'axios';
 
+import MessageStore from "./MessageStore";
+
 const ob = observable({
     origUrl: '',
     generatedUrl: '',
@@ -23,18 +25,6 @@ const setGeneratedUrl = action((val) => {
     ob.generatedUrl = val;
 });
 
-const setMessage = action(( val ) => {
-    ob.message = val;
-});
-
-const setClearMessage = action(() => {
-    ob.message = '';
-});
-
-const messageSuccessStatus = action((val) => {
-    ob.messageSuccessStatus = val;
-});
-
 const setRenderGeneratedURLSectionVisible = action((val) => {
     ob.renderGeneratedURLSection = val;
 });
@@ -43,8 +33,8 @@ const postGenerateShortId = action(() => {
     axios.post(process.env.REACT_APP_SERVER + '/shortenUrl', { longURL: ob.origUrl })
         .then(res => {
             setGeneratedUrl(res.data);
-            setMessage('ShortUrl successfully generated!');
-            messageSuccessStatus(true);
+            MessageStore.setMessage('ShortUrl successfully generated!');
+            MessageStore.messageSuccessStatus(true);
             setRenderGeneratedURLSectionVisible(true);
             HomePageStore.setSubmitButtonDisable();
 
@@ -54,8 +44,8 @@ const postGenerateShortId = action(() => {
             if(e.response.data) {
                 err = e.response.data;
             } 
-            setMessage(err);
-            messageSuccessStatus(false);
+            MessageStore.setMessage(err);
+            MessageStore.messageSuccessStatus(false);
             setRenderGeneratedURLSectionVisible(false);
             HomePageStore.setSubmitButtonDisable();
         });
@@ -66,8 +56,6 @@ const HomePageStore = {
     setOriginalUrl,
     postGenerateShortId,
     setSubmitButtonDisable,
-    setClearMessage,
-    setMessage
 };
 
 export default HomePageStore;
