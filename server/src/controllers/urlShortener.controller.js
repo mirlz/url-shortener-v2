@@ -1,22 +1,19 @@
 require('dotenv').config();
 const UrlShortener = require('../models/urlShortener');
-const CounterController = require('./counter.controller');
-const util = require('../utils/utilities');
 
 async function findShortUrlOrUpsert(url, res) {
     try {
         const doc = await UrlShortener.findOne({ 
             fullUrl: url,
             expiredAt: {
-                $gte: new Date(),
+                $gte:  new Date(),
             } 
         });
         if(!doc) {
-            const generatedShortUrl = await createNewShortURL(url);
-            return `${process.env.webHost}/${generatedShortUrl}`;
+            const shortUrlItem = await createNewShortURL(url);
+            return shortUrlItem;
         } else {
-            const { shortUrl } = doc;
-            return `${process.env.webHost}/${shortUrl}`;
+            return doc;
         }
     } catch(e) {
         console.log('findShortUrlOrUpsert error: ', e);
@@ -26,17 +23,12 @@ async function findShortUrlOrUpsert(url, res) {
 
 async function createNewShortURL(origUrl) {
     try {
-        const counter = await CounterController.incrementCounterAndSave();
-        const shortUrl = util.idToShortURL(counter);
-
         const newUrl = new UrlShortener({
             fullUrl: origUrl,
-            shortUrl: shortUrl,
-            countId: counter
         });
 
-        newUrl.save();
-        return shortUrl;
+        const shortUrlItem = await newUrl.save();
+        return shortUrlItem;
     } catch (e) {
         console.log('createnewShortURL error: ', e);
         return e;
